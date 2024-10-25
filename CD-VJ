@@ -1,0 +1,401 @@
+Exp.5 M ary PSK
+clc;
+clear all;
+close all;
+k=input('enter the no of bits');
+M = 2^k; %size
+N = k*10^3; % number of symbols
+% k = log2(M); % b/symbol
+
+a = [0:M-1]*2*pi/M; % phase values
+
+SNRdB = [0:2:20]; % SNR range
+
+sdB = SNRdB + 10*log10(k);
+
+% Mbinary to Gray code conversion
+
+b = [0:M-1];
+map =bitxor(b,floor(b/2));
+
+[tt ind] = sort(map);
+
+c = zeros(1,N);
+
+for i = 1:length(SNRdB)
+
+
+bits = rand(1,N*k,1)>0.5; % random 1's and 0's
+
+% binary to decikal
+bin2DecMatrix = ones(N,1)*(2.^((k-1):-1:0)) ;
+shape= reshape(bits,k,N).';
+
+% decimal to binary
+G= (sum(shape.*bin2DecMatrix,2)).';
+
+% Gray code mapping
+dec = ind(G+1)-1; %
+ph= dec*2*pi/M;
+
+% modulation
+d= exp(1i*ph);
+s = d;
+
+% AWGN
+
+n = 1/sqrt(2)*(randn(1,N) + 1i*randn(1,N));
+
+% reciever
+r = s + 10^(-sdB(i)/20)*n;
+
+% demodulation
+
+e = angle(r);
+
+% phase
+
+e(e<0) = e(e<0) + 2*pi;
+
+c = 2*pi/M*round(e/(2*pi/M)) ;
+
+c(c==2*pi) = 0;
+cd = round(c*M/(2*pi));
+
+% Decimal to Gray conversion
+
+f = map(cd+1);
+cb = dec2bin(f,k) ;
+
+
+cb = cb.';
+cb = cb(1:end).';
+cb = str2num(cb).' ;
+
+
+% errors
+Err(i) = size(find(bits- cb),2);
+
+
+end
+sBer=Err/(N*k);
+tBer =(1/k)*erfc(sqrt(k*10.^(SNRdB/10))*sin(pi/8));
+% plot
+figure
+semilogy(SNRdB,tBer,'rs-','LineWidth',2);
+hold on
+grid on
+semilogy(SNRdB,sBer,'kx-','LineWidth',2);
+
+legend('theory', 'simulation');
+xlabel('SNR dB')
+ylabel('Bit Error Rate')
+title('BER VS SNR M-PSK')
+
+
+
+
+
+EXP6. Mary QAM
+ clc;
+clear all;
+close all;
+N = 4*10^3;             % number of symbols
+M = 16;                  % size
+k = log2(M);             % bits/symbol
+
+
+% for 16-QAM
+Re = [-(2*sqrt(M)/2-1):2:-1 1:2:2*sqrt(M)/2-1];
+Im = [-(2*sqrt(M)/2-1):2:-1 1:2:2*sqrt(M)/2-1];
+k_QAM = 1/sqrt(10);
+bdB  = 3:1:13; % SNR range
+sdB  = bdB + 10*log10(k);
+% binary to gray code 
+a = [0:k-1];
+map = bitxor(a,floor(a/2));
+[tt ind] = sort(map);                                
+for i = 1:length(bdB)
+    c = rand(1,N*k,1)>0.5; % random 1's and 0's
+    d = reshape(c,k,N).';
+    bd = ones(N,1)*(2.^((k/2-1):-1:0)) ; % conversion from binary to decimal
+    % real
+    cRe =  d(:,(1:k/2));
+    e = sum(cRe.*bd,2);
+    f = bitxor(e,floor(e/2));
+   % imaginary
+    cIm =  d(:,(k/2+1:k));
+    g = sum(cIm.*bd,2);
+    h = bitxor(g,floor(g/2)); 
+    % mapping the Gray coded symbols into constellation
+    modRe = Re(f+1);
+    modIm = Im(h+1);
+    % constellation
+    mod = modRe + 1i*modIm;
+    s = k_QAM*mod; 
+    % noise
+    n = 1/sqrt(2)*[randn(1,N) + 1i*randn(1,N)];  
+    %    reciever
+    r = s + 10^(-sdB(i)/20)*n; 
+    % demodulation
+    r_re = real(r)/k_QAM; 
+    r_im = imag(r)/k_QAM; 
+    % rounding off
+     m = 2*floor(r_re/2)+1;
+    m(m>max(Re)) = max(Re);
+    m(m<min(Re)) = min(Re);
+    n= 2*floor(r_im/2)+1;
+    n(n>max(Im)) = max(Im);
+    n(n<min(Im)) = min(Im);
+    % To Decimal conversion
+    oRe = ind(floor((m+4)/2+1))-1; 
+    oIm = ind(floor((n+4)/2+1))-1; 
+    % To binary string
+    pRe = dec2bin(oRe,k/2);
+    pIm = dec2bin(oIm,k/2);
+   % binary string to number
+    pRe = pRe.';
+    pRe = pRe(1:end).';
+    pRe = reshape(str2num(pRe).',k/2,N).' ;
+    pIm = pIm.';
+    pIm = pIm(1:end).';
+    pIm = reshape(str2num(pIm).',k/2,N).' ;
+    % counting errors for real and imaginary
+    Err(i) = size(find([cRe- pRe]),1) + size(find([cIm - pIm]),1) ;
+end 
+sBer = Err/(N*k);
+tBer = (1/k)*3/2*erfc(sqrt(k*0.05*(10.^(bdB/10))));
+% plot
+figure
+semilogy(bdB,tBer,'rs-','LineWidth',2);
+hold on
+semilogy(bdB,sBer,'kx-','LineWidth',2);
+grid on
+legend('theory', 'simulation');
+xlabel('SNR dB')
+ylabel('Bit Error Rate')
+title('BER VS SNR')
+
+
+
+EXP 7.BPSK
+Initialization of Data and variables
+clc;
+clear all;
+close all;
+nr_data_bits=8192;
+b_data=(randn(1,nr_data_bits))>.5;
+b=[b_data]; 
+d=zeros(1,length(b));
+for n=1:length(b)
+    if(b(n)==0)
+        d(n)=exp(j*2*pi);
+    end        
+    if(b(n)==1)
+        d(n)=exp(j*pi);
+    end   
+end   
+disp(d)
+bpsk=d;
+figure(1);
+plot(d,'o');
+axis([-2 2 -2 2]);
+grid on;
+xlabel('real');
+ylabel('imag');
+title('BPSK constellation');
+SNR=0:24;
+BER1=[];
+SNR1=[];
+for SNR=0:length(SNR);
+ sigma=sqrt(10.0^(-SNR/10.0));   snbpsk=(real(bpsk)+sigma.*randn(size(bpsk)))+i.*(imag(bpsk)+sigma*randn(size(bpsk))); 
+figure(2);
+plot(snbpsk,'o');
+axis([-2 2 -2 2]);
+grid on;
+xlabel('real');
+ylabel('imag');
+title('Bpsk constellation with noise');
+r=snbpsk;
+bhat=[real(r)<0];
+bhat=bhat(:)';
+bhat1=bhat;
+ne=sum(b~=bhat1);
+BER=ne/nr_data_bits;
+BER1=[BER1 BER];
+SNR1=[SNR1 SNR];
+end
+figure(3);
+semilogy(SNR1,BER1,'-*');
+grid on;
+xlabel('SNR=Eb/No(db)');
+ylabel('BER');
+title('Simulation of BER for BPSK ');
+legend('BER-simulated');
+
+EXP8 SOURCE CODING
+clc;
+clear all;
+close all;
+pkg load communications;
+
+% Prompt for the number of symbols
+x = input('Enter number of symbols: ');
+symbols = zeros(1, x);
+p = zeros(1, x);
+
+% Input symbols and probabilities
+for m = 1:x 
+    symbols(m) = input('Enter the symbol number: '); 
+    p(m) = input('Enter the probability: '); 
+end 
+
+% Check if the probabilities sum to 1
+if abs(sum(p) - 1) > 1e-6
+    error('Probabilities must sum to 1');
+end
+
+% Generate the Huffman dictionary
+dict = huffmandict(symbols, p); % Now only capturing the dictionary
+
+% Calculate entropy
+Hx = 0;
+for m = 1:x
+    Hx = Hx + (p(m) * (-log2(p(m))));
+end 
+
+% Encode the symbols
+hcode = huffmanenco(symbols, dict);
+code_length = length(hcode);
+
+% Calculate average code length manually
+avglen = sum(p .* arrayfun(@(x) length(huffmanenco(x, dict)), symbols));
+
+% Calculate efficiency
+Efficiency = (Hx / avglen) * 100;
+
+% Display results
+disp(['Entropy (Hx): ', num2str(Hx)]);
+disp(['Average code length: ', num2str(avglen)]);
+disp(['Code length: ', num2str(code_length)]);
+disp(['Efficiency: ', num2str(Efficiency), '%']);
+
+
+EXP9 ENTROPIES AND MUTAL INFOR
+clc;
+clear all;
+close all;
+
+i = input('Enter no. of elements=');  % Number of elements
+q = input('Enter joint probabilities matrix=');  % Joint probabilities matrix
+
+% Probability P(X)
+sum = 0;
+for n = 1:i
+    w = 0;
+    for m = 1:i
+        p(n) = w + q(n,m);
+        w = p(n);
+    end
+end
+
+fprintf('P(X):\n');
+fprintf('%.4f\n', p);  % Display P(X) with 4 decimal places
+
+% Entropy H(X)
+H = 0;
+for n = 1:i
+    H = H + (p(n) * log2(1/p(n)));
+end
+fprintf('H(X): %.4f\n', H);  % Display H(X) with 4 decimal places
+
+% Conditional probability matrix P(Y|X)
+for n = 1:i
+    for m = 1:i
+        a(n,m) = q(n,m) / p(n);
+    end
+end
+fprintf('P(Y|X):\n');
+fprintf('%.4f ', a);  % Display conditional probabilities with 4 decimal places
+fprintf('\n');
+
+% Entropy H(Y|X)
+H1 = 0;
+for n = 1:i
+    for m = 1:i
+        if a(n,m) > 0
+            H1 = H1 + (q(n,m) * log2(1/a(n,m)));
+        end
+    end
+end
+fprintf('H(Y|X): %.4f\n', H1);  % Display H(Y|X) with 4 decimal places
+
+% Mutual Information MI
+m = H - H1;
+fprintf('MI: %.4f\n', m);  % Display MI with 4 decimal places
+
+% Probability P(Y)
+for n = 1:i
+    w = 0;
+    for m = 1:i
+        s(n) = w + q(m,n);
+        w = s(n);
+    end
+end
+fprintf('P(Y):\n');
+fprintf('%.4f\n', s);  % Display P(Y) with 4 decimal places
+
+% Entropy H(Y)
+H2 = 0;
+for n = 1:i
+    H2 = H2 + (s(n) * log2(1/s(n)));
+end
+fprintf('H(Y): %.4f\n', H2);  % Display H(Y) with 4 decimal places 
+
+EXP10 LINEAR BLOCK CODE
+clc
+clear all
+close all
+pkg load communications;
+% Use a [7,4] Hamming code.
+%k = 3; n = 2^m-1; m = n-k;
+%[H, G] = hammgen(k); % Produce parity-check matrix.
+k=input('Enter no of message bits k');
+n=input('Enter no of code bits n');
+G=zeros(k,n);
+G(:,1:k)=eye(k);
+disp('Enter Parity matrix k x n-k');
+for i=1:k
+    for j=1:n-k
+        G(i,j+k)=input(' enter no.');
+    end
+end
+d=0:2^k-1;
+db=dec2bin(d);
+for i=1:2^k
+    for j=1:k
+        dbb(i,j)=str2num(db(i,j));
+    end
+end
+G
+c(1:2^k,:)=rem(dbb(1:2^k,:)*G,2)
+wt=sum(c,2);
+H=[G(:,k+1:n)' eye(n-k)]
+H'
+trt = syndtable(H); % Produce decoding table.
+disp('Enter recd vector');
+for i=1:n
+    recd(1,i)=input('');
+end
+syndrome = rem(recd * H',2);
+syndrome_de = bi2de(syndrome,'left-msb'); % Convert to decimal.
+disp(['Syndrome = ',num2str(syndrome_de),...
+    ' (decimal), ',num2str(syndrome),' (binary)']);
+corrvect = trt(1+syndrome_de,:); % Correction vector
+%Now compute the corrected codeword.
+correctedcode = rem(corrvect+recd,2)
+y=correctedcode;
+y
+
+
+
