@@ -1,0 +1,64 @@
+def calculate_round_robin(processes, burst_times, time_quantum):
+    n = len(processes)
+    waiting_time = [0] * n
+    remaining_time = burst_times.copy()
+
+    t = 0  # Current time
+    while True:
+        done = True
+        for i in range(n):
+            if remaining_time[i] > 0:
+                done = False
+                if remaining_time[i] > time_quantum:
+                    t += time_quantum
+                    remaining_time[i] -= time_quantum
+                else:
+                    t += remaining_time[i]
+                    waiting_time[i] = t - burst_times[i]
+                    remaining_time[i] = 0
+        if done:
+            break
+
+    turnaround_time = [waiting_time[i] + burst_times[i] for i in range(n)]
+    return waiting_time, turnaround_time
+
+def display_results(processes, burst_times, waiting_time, turnaround_time):
+    print("\n" + "-" * 60)
+    print(f"{'Process':<10}{'Burst Time':<15}{'Waiting Time':<15}{'Turnaround Time':<15}")
+    print("-" * 60)
+
+    total_waiting_time = 0
+    total_turnaround_time = 0
+    for i in range(len(processes)):
+        total_waiting_time += waiting_time[i]
+        total_turnaround_time += turnaround_time[i]
+        print(f"{processes[i]:<10}{burst_times[i]:<15}{waiting_time[i]:<15}{turnaround_time[i]:<15}")
+
+    print("-" * 60)
+    print(f"{'Average Waiting Time:':<40}{total_waiting_time / len(processes):<15.2f}")
+    print(f"{'Average Turnaround Time:':<40}{total_turnaround_time / len(processes):<15.2f}")
+
+def main():
+    print("Round Robin Scheduling Algorithm")
+
+    # Get number of processes from the user
+    n = int(input("Enter the number of processes: "))
+    processes = [f"P{i+1}" for i in range(n)]
+    
+    # Get burst times from the user
+    burst_times = []
+    for i in range(n):
+        burst_time = int(input(f"Enter burst time for process {processes[i]}: "))
+        burst_times.append(burst_time)
+
+    # Get time quantum from the user
+    time_quantum = int(input("Enter the time quantum: "))
+
+    # Calculate waiting time and turnaround time
+    waiting_time, turnaround_time = calculate_round_robin(processes, burst_times, time_quantum)
+    
+    # Display the results
+    display_results(processes, burst_times, waiting_time, turnaround_time)
+
+if __name__ == "__main__":
+    main()

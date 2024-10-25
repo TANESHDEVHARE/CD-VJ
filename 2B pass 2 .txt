@@ -1,0 +1,138 @@
+2B pass 2 of macroprocessor
+
+
+
+
+import java.util.*;
+
+// Macro Name Table (MNT) Entry
+class MNTEntry {
+    String name;
+    int mdtIndex;
+
+    public MNTEntry(String name, int mdtIndex) {
+        this.name = name;
+        this.mdtIndex = mdtIndex;
+    }
+}
+
+// Macro Definition Table (MDT) Entry
+class MDTEntry {
+    String definition;
+
+    public MDTEntry(String definition) {
+        this.definition = definition;
+    }
+}
+
+public class Pass2MacroProcessor {
+
+    // Macro Name Table (MNT)
+    List<MNTEntry> MNT = new ArrayList<>();
+    // Macro Definition Table (MDT)
+    List<MDTEntry> MDT = new ArrayList<>();
+    // Argument List Array (ALA)
+    List<String> ALA = new ArrayList<>();
+    // Macro invocation stack
+    Stack<Integer> MDTInvocationStack = new Stack<>();
+
+    // Initialize MNT, MDT, and ALA (These would normally come from Pass 1)
+    public void initializePass1Data() {
+        // Example data from Pass 1
+        MNT.add(new MNTEntry("INCR", 0));
+
+        // Add MDT entries for the macro "INCR"
+        MDT.add(new MDTEntry("LDA #1"));
+        MDT.add(new MDTEntry("ADD =1"));
+        MDT.add(new MDTEntry("STA #1"));
+        MDT.add(new MDTEntry("MEND"));
+    }
+
+    // Expand a macro invocation with actual arguments
+    public void expandMacro(String macroName, List<String> actualArguments) {
+        // Lookup the macro in MNT
+        MNTEntry mntEntry = null;
+        for (MNTEntry entry : MNT) {
+            if (entry.name.equals(macroName)) {
+                mntEntry = entry;
+                break;
+            }
+        }
+
+        if (mntEntry == null) {
+            System.out.println("Macro not found: " + macroName);
+            return;
+        }
+
+        // Map actual arguments to ALA (positional replacement)
+        ALA.clear();
+        ALA.addAll(actualArguments);
+
+        // Start reading the macro body from MDT at the index given by MNT
+        int mdtPointer = mntEntry.mdtIndex;
+
+        while (true) {
+            MDTEntry mdtEntry = MDT.get(mdtPointer);
+
+            if (mdtEntry.definition.equalsIgnoreCase("MEND")) {
+                break;  // Stop when we encounter MEND
+            }
+
+            // Replace positional references (#1, #2, etc.) with actual arguments
+            String expandedLine = mdtEntry.definition;
+            for (int i = 0; i < ALA.size(); i++) {
+                expandedLine = expandedLine.replace("#" + (i + 1), ALA.get(i));
+            }
+
+            // Output the expanded line
+            System.out.println(expandedLine);
+
+            // Move to the next MDT entry
+            mdtPointer++;
+        }
+    }
+
+    // Process the source code and expand any macros found
+    public void processSourceCode(List<String> sourceCode) {
+        for (String line : sourceCode) {
+            String[] tokens = line.trim().split("\\s+");
+            String instruction = tokens[0];
+
+            // Check if it's a macro invocation (by looking it up in MNT)
+            boolean isMacroInvocation = false;
+            for (MNTEntry entry : MNT) {
+                if (instruction.equals(entry.name)) {
+                    isMacroInvocation = true;
+                    break;
+                }
+            }
+
+            if (isMacroInvocation) {
+                // Extract macro name and actual arguments
+                String macroName = tokens[0];
+                List<String> actualArguments = Arrays.asList(tokens).subList(1, tokens.length);
+
+                // Expand the macro
+                expandMacro(macroName, actualArguments);
+            } else {
+                // If it's not a macro, just print the line (regular code)
+                System.out.println(line);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Pass2MacroProcessor processor = new Pass2MacroProcessor();
+        processor.initializePass1Data();
+
+        // Example source code containing a macro invocation
+        List<String> sourceCode = new ArrayList<>();
+        sourceCode.add("START");
+        sourceCode.add("INCR A");  // Macro invocation with argument A
+        sourceCode.add("INCR B");  // Macro invocation with argument B
+        sourceCode.add("END");
+
+        System.out.println("Expanded Source Code:");
+        processor.processSourceCode(sourceCode);
+    }
+}

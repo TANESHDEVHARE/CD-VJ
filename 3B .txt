@@ -1,0 +1,69 @@
+# Define the SJF scheduling algorithm
+
+def sjf(processes):
+    # Sort processes based on arrival time and then burst time
+    processes.sort(key=lambda p: (p['Arrival Time'], p['Burst Time']))
+    
+    n = len(processes)
+    completed_processes = []
+    current_time = 0
+    total_turnaround_time = 0
+    total_waiting_time = 0
+
+    # List to keep track of the processes that have arrived and not yet completed
+    ready_queue = []
+    
+    while len(completed_processes) < n:
+        # Add processes to the ready queue based on arrival time
+        for p in processes:
+            if p['Arrival Time'] <= current_time and p not in ready_queue and p not in completed_processes:
+                ready_queue.append(p)
+        
+        # If the ready queue is empty, move time forward
+        if not ready_queue:
+            current_time += 1
+            continue
+        
+        # Select the process with the shortest burst time from the ready queue
+        ready_queue.sort(key=lambda p: p['Burst Time'])
+        current_process = ready_queue.pop(0)
+        
+        # Calculate times
+        current_process['Completion Time'] = current_time + current_process['Burst Time']
+        current_process['Turnaround Time'] = current_process['Completion Time'] - current_process['Arrival Time']
+        current_process['Waiting Time'] = current_process['Turnaround Time'] - current_process['Burst Time']
+        
+        # Update totals
+        total_turnaround_time += current_process['Turnaround Time']
+        total_waiting_time += current_process['Waiting Time']
+        
+        # Update the current time
+        current_time += current_process['Burst Time']
+        
+        # Add to completed processes
+        completed_processes.append(current_process)
+        
+        # Print results for the current process
+        print(f"Process ID: {current_process['ID']}, Arrival Time: {current_process['Arrival Time']}, "
+              f"Burst Time: {current_process['Burst Time']}, Completion Time: {current_process['Completion Time']}, "
+              f"Turnaround Time: {current_process['Turnaround Time']}, Waiting Time: {current_process['Waiting Time']}")
+    
+    # Print average times
+    print(f"\nAverage Turnaround Time: {total_turnaround_time / n:.2f}")
+    print(f"Average Waiting Time: {total_waiting_time / n:.2f}")
+
+def main():
+    # Example process list
+    processes = [
+        {'ID': 1, 'Arrival Time': 0, 'Burst Time': 8},
+        {'ID': 2, 'Arrival Time': 1, 'Burst Time': 4},
+        {'ID': 3, 'Arrival Time': 2, 'Burst Time': 9},
+        {'ID': 4, 'Arrival Time': 3, 'Burst Time': 5}
+    ]
+    
+    print("SJF Scheduling:")
+    sjf(processes)
+
+if __name__ == "__main__":
+    main()
+

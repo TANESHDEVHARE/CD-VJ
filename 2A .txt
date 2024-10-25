@@ -1,0 +1,144 @@
+2A macroprocessor
+
+import java.util.*;
+
+// Macro Name Table (MNT) Entry
+class MNTEntry {
+    String name;
+    int mdtIndex;
+
+    public MNTEntry(String name, int mdtIndex) {
+        this.name = name;
+        this.mdtIndex = mdtIndex;
+    }
+}
+
+// Macro Definition Table (MDT) Entry
+class MDTEntry {
+    String definition;
+
+    public MDTEntry(String definition) {
+        this.definition = definition;
+    }
+}
+
+// Argument List Array (ALA) for storing arguments
+class ALAEntry {
+    String argument;
+
+    public ALAEntry(String argument) {
+        this.argument = argument;
+    }
+}
+
+public class Pass1MacroProcessor {
+
+    // Macro Name Table (MNT)
+    List<MNTEntry> MNT = new ArrayList<>();
+    // Macro Definition Table (MDT)
+    List<MDTEntry> MDT = new ArrayList<>();
+    // Argument List Array (ALA)
+    List<String> ALA = new ArrayList<>();
+
+    public void processLine(String line) {
+        String[] tokens = line.trim().split("\\s+");
+
+        if (tokens[0].equalsIgnoreCase("MACRO")) {
+            // Start reading macro definition
+            processMacroDefinition();
+        } else {
+            // Non-macro line (process it or write to intermediate file)
+            System.out.println("Processing non-macro line: " + line);
+        }
+    }
+
+    public void processMacroDefinition() {
+        Scanner scanner = new Scanner(System.in);
+
+        // Read macro name
+        String macroHeader = scanner.nextLine().trim();
+        String[] headerTokens = macroHeader.split("\\s+");
+        String macroName = headerTokens[0];
+        int mdtStartIndex = MDT.size(); // MDT index for this macro
+
+        // Add macro name to MNT
+        MNT.add(new MNTEntry(macroName, mdtStartIndex));
+
+        // Process arguments
+        if (headerTokens.length > 1) {
+            for (int i = 1; i < headerTokens.length; i++) {
+                ALA.add(headerTokens[i]);
+            }
+        }
+
+        // Process macro body
+        while (true) {
+            String macroBodyLine = scanner.nextLine().trim();
+            if (macroBodyLine.equalsIgnoreCase("MEND")) {
+                MDT.add(new MDTEntry(macroBodyLine)); // Add MEND to MDT
+                break;
+            } else {
+                // Replace arguments with positional notation (e.g., #1, #2, etc.)
+                for (int i = 0; i < ALA.size(); i++) {
+                    macroBodyLine = macroBodyLine.replace(ALA.get(i), "#" + (i + 1));
+                }
+                MDT.add(new MDTEntry(macroBodyLine)); // Add the processed line to MDT
+            }
+        }
+
+        System.out.println("Macro processed: " + macroName);
+    }
+
+    public void displayTables() {
+        // Display Macro Name Table (MNT)
+        System.out.println("\nMNT (Macro Name Table):");
+        for (MNTEntry entry : MNT) {
+            System.out.println("Macro Name: " + entry.name + " | MDT Index: " + entry.mdtIndex);
+        }
+
+        // Display Macro Definition Table (MDT)
+        System.out.println("\nMDT (Macro Definition Table):");
+        for (int i = 0; i < MDT.size(); i++) {
+            System.out.println((i + 1) + ": " + MDT.get(i).definition);
+        }
+
+        // Display Argument List Array (ALA)
+        System.out.println("\nALA (Argument List Array):");
+        for (int i = 0; i < ALA.size(); i++) {
+            System.out.println((i + 1) + ": " + ALA.get(i));
+        }
+    }
+
+    public static void main(String[] args) {
+        Pass1MacroProcessor processor = new Pass1MacroProcessor();
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Enter macro definition and code. Type 'END' to finish:");
+        
+        while (true) {
+            String line = scanner.nextLine().trim();
+            if (line.equalsIgnoreCase("END")) {
+                break;
+            }
+            processor.processLine(line);
+        }
+
+        // Display the MNT, MDT, and ALA after processing
+        processor.displayTables();
+    }
+}
+
+
+
+
+
+then enter macro defn and code
+
+
+MACRO
+INCR &ARG1
+LDA &ARG1
+ADD =1
+STA &ARG1
+MEND
+END

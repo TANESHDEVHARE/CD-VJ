@@ -1,0 +1,99 @@
+pass 1A
+
+import re
+
+class Assembler:
+    def __init__(self):
+        self.symbol_table = {}
+        self.literal_table = {}
+        self.pool_table = []
+        self.intermediate_code = []
+
+    def process_assembly(self, assembly_code):
+        LC = 0
+        pool_index = 0
+        
+        for line in assembly_code:
+            line = line.strip()
+            
+            # Skip empty lines and comments
+            if not line or line.startswith('//'):
+                continue
+            
+            # START directive
+            if line.startswith('START'):
+                LC = int(line.split()[1])
+                self.intermediate_code.append((LC, line))
+                continue
+            
+            # Handle labels and instructions
+            tokens = re.split(r'\s+', line, 1)
+            label = None
+            
+            if len(tokens) > 1:
+                label, line = tokens
+                
+                # Check if label is followed by an instruction
+                if ',' in label:
+                    label, line = None, tokens[0]
+            
+            # Check for literals
+            literals = re.findall(r'=[C|X|F]\'.*?\'', line)
+            
+            for literal in literals:
+                if literal not in self.literal_table:
+                    self.literal_table[literal] = None
+            
+            # Update symbol table
+            if label and label not in self.symbol_table:
+                self.symbol_table[label] = LC
+            
+            # Update intermediate code
+            self.intermediate_code.append((LC, line))
+            
+            # Update location counter
+            LC += 1
+        
+        # Update literal addresses
+        for literal in self.literal_table:
+            self.literal_table[literal] = LC
+            LC += 1
+        
+        # Update pool table
+        for index, (lc, line) in enumerate(self.intermediate_code):
+            literals = re.findall(r'=[C|X|F]\'.*?\'', line)
+            if literals:
+                self.pool_table.append(index)
+
+    def print_tables(self):
+        print("Symbol Table:")
+        for symbol, address in self.symbol_table.items():
+            print(f"{symbol}\t{address}")
+
+        print("\nLiteral Table:")
+        for literal, address in self.literal_table.items():
+            print(f"{literal}\t{address}")
+
+        print("\nPool Table:")
+        print(self.pool_table)
+
+        print("\nIntermediate Code:")
+        for lc, line in self.intermediate_code:
+            print(f"{lc}\t{line}")
+
+
+# Example usage:
+if __name__ == "__main__":
+    assembler = Assembler()
+    assembly_code = [
+        "// Sample assembly code",
+        "START 1000",
+        "LOOP1 ADD A, B",
+        "MOV C, X",
+        "MOVER D, Y",
+        "=F'5'",
+        "END"
+    ]
+    
+    assembler.process_assembly(assembly_code)
+    assembler.print_tables()

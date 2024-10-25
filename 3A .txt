@@ -1,0 +1,120 @@
+def fcfs(processes):
+    print("FCFS Scheduling:")
+    print("Process ID | Arrival Time | Burst Time | Completion Time | Turnaround Time | Waiting Time")
+    current_time = 0
+    total_turnaround_time = 0
+    total_waiting_time = 0
+    for p in processes:
+        p['Completion Time'] = current_time + p['Burst Time']
+        p['Turnaround Time'] = p['Completion Time'] - p['Arrival Time']
+        p['Waiting Time'] = p['Turnaround Time'] - p['Burst Time']
+        total_turnaround_time += p['Turnaround Time']
+        total_waiting_time += p['Waiting Time']
+        current_time += p['Burst Time']
+        print(f"{p['ID']}         | {p['Arrival Time']}            | {p['Burst Time']}        | {p['Completion Time']}           | {p['Turnaround Time']}            | {p['Waiting Time']}")
+    print(f"\nAverage Turnaround Time: {total_turnaround_time / len(processes):.2f}")
+    print(f"Average Waiting Time: {total_waiting_time / len(processes):.2f}")
+
+def sjf(processes):
+    print("SJF Scheduling:")
+    print("Process ID | Arrival Time | Burst Time | Completion Time | Turnaround Time | Waiting Time")
+    processes.sort(key=lambda p: (p['Arrival Time'], p['Burst Time']))
+    current_time = 0
+    total_turnaround_time = 0
+    total_waiting_time = 0
+    for p in processes:
+        if current_time < p['Arrival Time']:
+            current_time = p['Arrival Time']
+        p['Completion Time'] = current_time + p['Burst Time']
+        p['Turnaround Time'] = p['Completion Time'] - p['Arrival Time']
+        p['Waiting Time'] = p['Turnaround Time'] - p['Burst Time']
+        total_turnaround_time += p['Turnaround Time']
+        total_waiting_time += p['Waiting Time']
+        current_time += p['Burst Time']
+        print(f"{p['ID']}         | {p['Arrival Time']}            | {p['Burst Time']}        | {p['Completion Time']}           | {p['Turnaround Time']}            | {p['Waiting Time']}")
+    print(f"\nAverage Turnaround Time: {total_turnaround_time / len(processes):.2f}")
+    print(f"Average Waiting Time: {total_waiting_time / len(processes):.2f}")
+
+def priority_scheduling(processes):
+    print("Priority Scheduling:")
+    print("Process ID | Arrival Time | Burst Time | Priority | Completion Time | Turnaround Time | Waiting Time")
+    processes.sort(key=lambda p: (p['Arrival Time'], -p['Priority']))
+    current_time = 0
+    total_turnaround_time = 0
+    total_waiting_time = 0
+    for p in processes:
+        if current_time < p['Arrival Time']:
+            current_time = p['Arrival Time']
+        p['Completion Time'] = current_time + p['Burst Time']
+        p['Turnaround Time'] = p['Completion Time'] - p['Arrival Time']
+        p['Waiting Time'] = p['Turnaround Time'] - p['Burst Time']
+        total_turnaround_time += p['Turnaround Time']
+        total_waiting_time += p['Waiting Time']
+        current_time += p['Burst Time']
+        print(f"{p['ID']}         | {p['Arrival Time']}            | {p['Burst Time']}        | {p['Priority']}    | {p['Completion Time']}           | {p['Turnaround Time']}            | {p['Waiting Time']}")
+    print(f"\nAverage Turnaround Time: {total_turnaround_time / len(processes):.2f}")
+    print(f"Average Waiting Time: {total_waiting_time / len(processes):.2f}")
+
+def round_robin(processes, quantum):
+    print("Round Robin Scheduling:")
+    print("Process ID | Arrival Time | Burst Time | Completion Time | Turnaround Time | Waiting Time")
+    queue = []
+    current_time = 0
+    total_turnaround_time = 0
+    total_waiting_time = 0
+    processes_copy = processes[:]
+    while processes_copy or queue:
+        for p in processes:
+            if p['Arrival Time'] <= current_time and p['Burst Time'] > 0:
+                queue.append(p)
+        if queue:
+            p = queue.pop(0)
+            burst_time = min(p['Burst Time'], quantum)
+            p['Burst Time'] -= burst_time
+            current_time += burst_time
+            if p['Burst Time'] == 0:
+                p['Completion Time'] = current_time
+                p['Turnaround Time'] = p['Completion Time'] - p['Arrival Time']
+                p['Waiting Time'] = p['Turnaround Time'] - p['Burst Time']
+                total_turnaround_time += p['Turnaround Time']
+                total_waiting_time += p['Waiting Time']
+                print(f"{p['ID']}         | {p['Arrival Time']}            | {p['Burst Time'] + burst_time}        | {p['Completion Time']}           | {p['Turnaround Time']}            | {p['Waiting Time']}")
+        else:
+            current_time += 1
+    print(f"\nAverage Turnaround Time: {total_turnaround_time / len(processes):.2f}")
+    print(f"Average Waiting Time: {total_waiting_time / len(processes):.2f}")
+
+def main():
+    processes = [
+        {'ID': 1, 'Arrival Time': 0, 'Burst Time': 5, 'Priority': 3},
+        {'ID': 2, 'Arrival Time': 2, 'Burst Time': 3, 'Priority': 1},
+        {'ID': 3, 'Arrival Time': 4, 'Burst Time': 1, 'Priority': 4},
+        {'ID': 4, 'Arrival Time': 6, 'Burst Time': 2, 'Priority': 2}
+    ]
+    
+    while True:
+        print("\nScheduling Algorithms")
+        print("1. FCFS")
+        print("2. SJF")
+        print("3. Priority Scheduling")
+        print("4. Round Robin")
+        print("5. Exit")
+        
+        choice = input("Choose an option: ")
+        
+        if choice == '1':
+            fcfs([p.copy() for p in processes])
+        elif choice == '2':
+            sjf([p.copy() for p in processes])
+        elif choice == '3':
+            priority_scheduling([p.copy() for p in processes])
+        elif choice == '4':
+            quantum = int(input("Enter quantum time for Round Robin: "))
+            round_robin([p.copy() for p in processes], quantum)
+        elif choice == '5':
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,56 @@
+class LRU:
+    def __init__(self, frame_count):
+        self.frame_count = frame_count
+        self.frames = []
+        self.page_faults = 0
+        self.page_hits = 0
+
+    def reference_page(self, page):
+        if page in self.frames:
+            # Page hit
+            self.page_hits += 1
+            # Move the page to the end to mark it as recently used
+            self.frames.remove(page)
+            self.frames.append(page)
+        else:
+            # Page fault occurs
+            if len(self.frames) < self.frame_count:
+                # There is space in the frames
+                self.frames.append(page)
+            else:
+                # Replace the least recently used page
+                self.frames.pop(0)  # Remove the first page (LRU)
+                self.frames.append(page)
+            self.page_faults += 1
+
+    def get_statistics(self):
+        total_references = self.page_faults + self.page_hits
+        hit_ratio = (self.page_hits / total_references) * 100 if total_references > 0 else 0
+        fault_ratio = (self.page_faults / total_references) * 100 if total_references > 0 else 0
+        return {
+            "page_faults": self.page_faults,
+            "page_hits": self.page_hits,
+            "hit_ratio": hit_ratio,
+            "fault_ratio": fault_ratio
+        }
+
+def simulate_lru(pages, frame_count):
+    lru = LRU(frame_count)
+    for page in pages:
+        lru.reference_page(page)
+    
+    stats = lru.get_statistics()
+    return stats
+
+# Example usage
+if __name__ == "__main__":
+    pages = [7, 0, 1, 2, 0, 3, 0, 4, 2, 3, 0, 3]
+    frame_count = 3
+    stats = simulate_lru(pages, frame_count)
+    
+    print()
+    print(f"Number of Page Faults: {stats['page_faults']}")
+    print(f"Number of Page Hits: {stats['page_hits']}")
+    print(f"Page Fault Ratio: {stats['fault_ratio']:.2f}%")
+    print(f"Page Hit Ratio: {stats['hit_ratio']:.2f}%")
+    print()

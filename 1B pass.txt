@@ -1,0 +1,65 @@
+# Assume the following inputs are available from Pass 1:
+symbol_table = {
+    'LOOP': 1000,     # Example: LOOP is at address 1000
+    'END': 1010,      # Example: END is at address 1010
+    # Add other symbols from pass 1 here
+}
+
+opcodes = {
+    'ADD': '18',      # Example: ADD is opcode 18
+    'SUB': '1C',      # Example: SUB is opcode 1C
+    'MUL': '20',      # Example: MUL is opcode 20
+    'DIV': '24',      # Example: DIV is opcode 24
+    'LOAD': '00',     # Example: LOAD is opcode 00
+    'STORE': '0C',    # Example: STORE is opcode 0C
+    'JUMP': '3C',     # Example: JUMP is opcode 3C
+    'STOP': '4F'      # Example: STOP is opcode 4F
+    # Add other operation codes as needed
+}
+
+# Assume intermediate code from Pass 1, along with any label references
+intermediate_code = [
+    ('LOAD', 'A'),         # LOAD A
+    ('ADD', 'B'),          # ADD B
+    ('STORE', 'C'),        # STORE C
+    ('JUMP', 'LOOP'),      # JUMP LOOP
+    ('STOP', None)         # STOP
+]
+
+# Address table from pass 1 for symbols
+symbol_address = {
+    'A': 1020,
+    'B': 1024,
+    'C': 1028,
+    'LOOP': 1000,
+    'END': 1010
+}
+
+def pass_two_assembler(intermediate_code, symbol_address, opcodes):
+    machine_code = []
+    
+    for instruction in intermediate_code:
+        opcode, operand = instruction
+        # Get the opcode
+        opcode_hex = opcodes.get(opcode, '??')  # Fallback to '??' if opcode not found
+        
+        # Get the operand address (either from symbol table or directly)
+        if operand is None:
+            # If there's no operand (e.g., for STOP), just use the opcode
+            machine_instruction = f'{opcode_hex}0000'
+        else:
+            # Get the address of the operand
+            operand_address = symbol_address.get(operand, '????')
+            machine_instruction = f'{opcode_hex}{operand_address}'
+        
+        machine_code.append(machine_instruction)
+    
+    return machine_code
+
+
+# Run the pass two assembler
+final_machine_code = pass_two_assembler(intermediate_code, symbol_address, opcodes)
+
+# Output the generated machine code
+for instruction in final_machine_code:
+    print(instruction)
