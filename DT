@@ -1,0 +1,570 @@
+UNIT 1: System Programs and Assemblers
+________________________________________
+Q1. What are the different components of system programs?
+System programs are essential for creating an interface between the hardware and users or application software. The main components include:
+1.	Assemblers: Converts assembly code into machine code.
+2.	Compilers: Transforms high-level language code into machine code.
+3.	Linkers: Combines object files to create an executable.
+4.	Loaders: Loads executable files into memory for execution.
+5.	Debuggers: Assists in testing and debugging programs.
+6.	Text Editors: Provides the environment to write and edit code.
+7.	Interpreters: Executes code line by line instead of compiling it as a whole.
+________________________________________
+Q2. Explain Pass-I of Two Pass Assembler.
+In Pass-I of a two-pass assembler:
+1.	The assembler reads the source code and generates the symbol table.
+2.	It assigns addresses to all symbols and labels in the program.
+3.	Handles pseudo-ops (assembler directives).
+4.	Forward references are stored temporarily.
+5.	Generates an intermediate code without resolving addresses for forward references, which will be done in Pass-II.
+________________________________________
+Q3. Explain Pass-II of Two Pass Assembler.
+In Pass-II of a two-pass assembler:
+1.	The assembler reads the intermediate code generated in Pass-I.
+2.	Addresses of forward-referenced symbols are now resolved using the symbol table.
+3.	Generates the machine code or object code.
+4.	Literal pools and other memory allocations are resolved.
+5.	Writes the machine code to an output file.
+________________________________________
+Q4. What is the difference between Compiler and Interpreter?
+•	Compiler: Translates the entire high-level program into machine code before execution. The machine code is executed in one go.
+o	Example: C, C++.
+•	Interpreter: Translates and executes one instruction at a time. No intermediate machine code is produced.
+o	Example: Python, JavaScript.
+________________________________________
+Q5. Discuss Forward Reference. How is it handled in a Single Pass Assembler?
+A forward reference occurs when a label is used before it is defined in the source code.
+•	In a single pass assembler, it cannot fully resolve forward references in the same pass. Therefore, it uses backpatching where unresolved addresses are temporarily stored, and after the label is defined, these addresses are updated.
+________________________________________
+Q6. Different Data Structures in Pass-I & Pass-II of Assembler
+•	Pass-I:
+o	Symbol Table: Stores labels and their corresponding addresses.
+o	Literal Table: Stores literals and their addresses.
+o	Location Counter: Keeps track of memory addresses.
+•	Pass-II:
+o	Machine Code: Stores the translated object code.
+o	Backpatching Table: Used for forward reference resolution.
+________________________________________
+Q7. What is LTORG?
+LTORG (Literal Pool Origin) is an assembler directive that forces the assembler to dump the current literals into memory at the current location. This ensures that literals are stored close to where they are used, improving memory efficiency.
+________________________________________
+Q8. Different Advanced Assembler Directives
+•	START: Specifies the beginning of a program.
+•	END: Marks the end of a program.
+•	EQU: Assigns a constant value to a symbol.
+•	ORG: Changes the location counter to a specified address.
+•	LTORG: Dumps literals into memory.
+________________________________________
+Q9. What is Intermediate Code?
+Intermediate code is a representation of a program between the high-level language and machine code. It simplifies optimization and portability of the compilation process, allowing further processing before generating machine code.
+________________________________________
+Q10. Different Types of Errors Handled by Pass-I
+1.	Syntax errors: Incorrect use of mnemonics or directives.
+2.	Symbol errors: Undefined or multiply defined symbols.
+3.	Literal errors: Errors in literal specification.
+4.	Operand errors: Incorrect or missing operands.
+________________________________________
+UNIT 2: Macros and Macro Processors
+________________________________________
+Q1. Explain Pass-I of Two Pass Macro Assembler
+In Pass-I:
+1.	Macro definitions are identified and stored in tables like MNT (Macro Name Table) and MDT (Macro Definition Table).
+2.	Macro calls are replaced with placeholders for expansion during Pass-II.
+3.	ALA (Argument List Array) stores the arguments passed to macros.
+________________________________________
+Q2. Explain Pass-II of Two Pass Macro Assembler
+In Pass-II:
+1.	The assembler expands macros using MDT and ALA.
+2.	It replaces macro calls with the actual code defined in the macro.
+3.	The expanded code is assembled to generate machine code.
+________________________________________
+Q3. Explain the Need of Macro & Macro Processor
+•	Macro: A set of instructions grouped as a unit and referred to by a name.
+•	Need: It simplifies repetitive code writing by allowing one-time definition and multiple usages.
+•	Macro Processor: Expands macros into full assembly code during assembly time.
+________________________________________
+Q4. What are the Data Structures Used in the Design of Macro Processor?
+•	MNT (Macro Name Table): Stores names of macros.
+•	MDT (Macro Definition Table): Stores the macro definition code.
+•	ALA (Argument List Array): Stores arguments passed to macros.
+________________________________________
+Q5. Explain Macro Call within Macro Definition
+A nested macro is when a macro calls another macro within its definition. The macro processor handles this by first expanding the inner macro before the outer macro.
+________________________________________
+Q6. Explain Different Phases of Compiler with Example
+The six phases of a compiler are:
+1.	Lexical Analysis: Tokenizes the source code.
+2.	Syntax Analysis: Checks for grammar structure.
+3.	Semantic Analysis: Ensures meaning correctness.
+4.	Intermediate Code Generation: Produces an intermediate form.
+5.	Optimization: Improves efficiency of intermediate code.
+6.	Code Generation: Produces machine code.
+Example: For a = b + c;:
+1.	Lexical: a, =, b, +, c are tokens.
+2.	Syntax: Ensures correct structure like expr -> id = expr.
+3.	Semantic: Checks if a, b, c are valid variables.
+4.	Intermediate: Generates code like t1 = b + c.
+5.	Optimization: Removes redundant instructions.
+6.	Code Generation: Converts it to machine code.
+________________________________________
+Q7. Explain MNT, MDT, MNTP, MDTP, ALA
+•	MNT (Macro Name Table): Stores names and locations of macro definitions.
+•	MDT (Macro Definition Table): Stores macro definition instructions.
+•	MNTP (Macro Name Table Pointer): Points to entries in MNT.
+•	MDTP (Macro Definition Table Pointer): Points to the macro definition in MDT.
+•	ALA (Argument List Array): Stores formal arguments for macros.
+________________________________________
+Q8. Difference Between Interpreter and Compiler
+•	Interpreter: Executes code line by line.
+•	Compiler: Converts entire source code into machine code.
+________________________________________
+Q9. Explain Nested Macro Processor
+In a nested macro, one macro invokes another within its definition. The macro processor must handle both macro definitions in a recursive manner, ensuring each macro is expanded in the correct order.
+________________________________________
+Q10. Explain Different Phases of Compiler
+Same as Q6.
+________________________________________
+Q11. Difference Between Macro and Function
+•	Macro: Expanded in place during assembly time.
+•	Function: Called at runtime with a separate stack frame and return values.
+________________________________________
+Q12. Difference Between Macro and Subroutine
+•	Macro: Code is expanded in place; no function call overhead.
+•	Subroutine: Code is executed via a function call; allows code reuse.
+________________________________________
+UNIT 3: Loaders and Linkers
+________________________________________
+Q1. Different Loading Schemes
+•	Absolute Loading: No relocation; the program is loaded at a fixed memory location.
+•	Relocatable Loading: Code can be loaded at any memory location using relative addressing.
+•	Dynamic Loading: Programs are loaded into memory as needed during execution.
+________________________________________
+Q2. Functions of Loader
+1.	Loading: Loads executable code into memory.
+2.	Relocation: Adjusts addresses in the code based on the loading address.
+3.	Linking: Resolves references between object files.
+4.	Memory Management: Allocates memory for the program.
+________________________________________
+Q3. Difference Between Static and Dynamic Linking
+•	Static Linking: All required libraries are included in the executable file.
+•	Dynamic Linking: Libraries are loaded at runtime, reducing the size of the executable.
+________________________________________
+Q4. What is a Self-Relocating Program?
+A self-relocating program adjusts its own code during execution to allow it to be loaded at different memory addresses.
+
+Q1. What is an Operating System? Explain functions of an operating system.
+An Operating System (OS) is system software that manages computer hardware, software resources, and provides services to computer programs. It acts as an intermediary between users and the computer hardware.
+Key Functions of an Operating System:
+1.	Process Management: Manages process creation, execution, and termination, allocating CPU time and handling process synchronization and communication.
+2.	Memory Management: Manages primary memory allocation and deallocation, ensuring efficient memory utilization and protection.
+3.	File System Management: Controls file creation, deletion, access permissions, and storage organization.
+4.	Device Management: Interfaces with peripheral devices, managing input/output operations.
+5.	Security and Access Control: Ensures secure access to data and system resources, managing user authentication and access permissions.
+6.	User Interface: Provides an interface (command-line or GUI) for user interaction.
+7.	Networking: Manages network communications and provides protocol support.
+8.	Job Scheduling: Allocates system resources efficiently by managing CPU, memory, and I/O scheduling.
+________________________________________
+Q2. What is a Process & Thread?
+•	Process: A process is an active instance of a program in execution, including program code, data, and a control block (PCB) that tracks the process’s status, such as its priority, memory allocation, and state.
+•	Thread: A thread, also known as a lightweight process, is the smallest unit of execution within a process. Each thread has its own program counter, stack, and set of registers, but shares memory and resources with other threads within the same process.
+Key Differences:
+•	Processes are independent, whereas threads are subdivisions of a process.
+•	Processes have separate memory spaces, while threads share the same memory within a process.
+•	Thread creation is generally faster than process creation, as threads share resources.
+________________________________________
+Q3. What are the different states of a Process & Thread? (Lifecycle of Process & Thread)
+Process States:
+1.	New: Process is being created.
+2.	Ready: Process is ready to be assigned to the CPU for execution.
+3.	Running: Process is currently executing on the CPU.
+4.	Blocked (or Waiting): Process is waiting for some event to occur (like I/O completion).
+5.	Terminated: Process has completed execution.
+Thread States (Similar to processes but managed within a process context):
+1.	Ready: Thread is ready to execute.
+2.	Running: Thread is actively being executed.
+3.	Waiting: Thread is waiting for a resource.
+4.	Terminated: Thread has completed execution.
+________________________________________
+Q4. What are Different Scheduler Algorithms?
+Schedulers determine the order in which processes run on the CPU.
+1.	First-Come, First-Served (FCFS): Non-preemptive; processes are executed in the order they arrive.
+2.	Shortest Job Next (SJN): Non-preemptive; selects the process with the shortest execution time.
+3.	Shortest Remaining Time First (SRTF): Preemptive; similar to SJN, but can preempt a running process if a new, shorter process arrives.
+4.	Round Robin (RR): Preemptive; each process is given a fixed time slice (quantum) for execution in a cyclic order.
+5.	Priority Scheduling: Can be preemptive or non-preemptive; the CPU is allocated based on process priority.
+6.	Multilevel Queue Scheduling: Organizes processes into queues based on priority and uses different scheduling algorithms within each queue.
+7.	Multilevel Feedback Queue Scheduling: Processes can move between queues based on behavior and resource requirements.
+________________________________________
+Q5. What is a Scheduler?
+A Scheduler is a component of the OS responsible for managing the execution order of processes. It allocates CPU time and other resources to processes based on scheduling algorithms, ensuring efficient utilization of system resources.
+________________________________________
+Q6. What are Short-Term, Medium-Term, and Long-Term Schedulers?
+1.	Short-Term Scheduler (CPU Scheduler): Selects which of the ready processes should execute next on the CPU. It is invoked frequently, making fast decisions about process transitions.
+2.	Medium-Term Scheduler: Responsible for swapping processes in and out of memory, helping balance memory usage and improve multiprogramming.
+3.	Long-Term Scheduler (Job Scheduler): Controls the degree of multiprogramming by deciding which processes are admitted to the system for processing. It is invoked less frequently, focusing on controlling the process mix.
+________________________________________
+Q7. What is Turnaround Time & Waiting Time? How to Calculate It?
+•	Turnaround Time: The total time taken from process submission to completion.
+Turnaround Time=Completion Time−Arrival Time\text{Turnaround Time} = \text{Completion Time} - \text{Arrival Time}Turnaround Time=Completion Time−Arrival Time
+•	Waiting Time: The total time a process spends in the ready queue waiting to be executed.
+Waiting Time=Turnaround Time−Burst Time\text{Waiting Time} = \text{Turnaround Time} - \text{Burst Time}Waiting Time=Turnaround Time−Burst Time
+________________________________________
+Q8. What is the Difference Between Preemptive & Non-preemptive Algorithm? Which Algorithm is Preemptive and Non-preemptive and Why?
+•	Preemptive Scheduling: Allows the OS to interrupt a running process and allocate the CPU to another process. Common in systems where response time is critical (e.g., Round Robin, SRTF, Priority Scheduling).
+o	Example: Round Robin, SRTF (Shortest Remaining Time First).
+•	Non-Preemptive Scheduling: Once a process starts execution, it runs to completion or until it voluntarily releases the CPU.
+o	Example: FCFS, SJN (Shortest Job Next).
+Preemptive scheduling is generally used for time-sharing and real-time systems, while non-preemptive scheduling is used in batch systems.
+________________________________________
+Q9. Which Algorithm Has Less Waiting Time?
+Algorithms with less waiting time depend on the specific conditions and types of jobs in the queue. Generally:
+•	Shortest Job Next (SJN) or Shortest Remaining Time First (SRTF) minimizes waiting time when all processes are available initially, as it prioritizes shorter jobs.
+•	Round Robin (RR) provides a fair time distribution, reducing starvation but may result in higher waiting time than SJN/SRTF for short jobs.
+
+Operating Systems: Advanced Concepts (Interprocess Communication, Deadlocks, and Memory Management)
+________________________________________
+UNIT 5: Interprocess Communication and Synchronization
+Q1. What is Interprocess Communication (IPC) & Synchronization?
+•	Interprocess Communication (IPC): A set of methods for exchanging data between multiple processes. IPC enables processes to communicate and share resources efficiently, especially in multi-process systems.
+o	Methods: Pipes, message queues, shared memory, semaphores, and sockets.
+•	Synchronization: Ensures that processes are coordinated to prevent conflicts and avoid inconsistent data by controlling the order of execution. This is essential when multiple processes access shared resources.
+________________________________________
+Q2. What is Race Condition, Semaphore, Mutual Exclusion & Critical Section?
+•	Race Condition: Occurs when multiple processes access shared resources simultaneously, and the outcome depends on the order of execution. Without synchronization, race conditions can lead to inconsistent data.
+•	Semaphore: A synchronization mechanism that uses counters to control access to shared resources.
+o	Binary Semaphore: Takes values 0 or 1 (like a lock).
+o	Counting Semaphore: Has a range of values for managing multiple instances of a resource.
+•	Mutual Exclusion (Mutex): A concept to ensure only one process can access a critical section at a time, preventing simultaneous modifications.
+•	Critical Section: Part of a process that accesses shared resources. Synchronization mechanisms ensure that only one process at a time can execute in its critical section.
+________________________________________
+Q3. What is the Producer-Consumer Problem, Reader-Writer Problem & Dining Philosopher Problem?
+•	Producer-Consumer Problem: Involves two types of processes:
+o	Producers generate data and place it in a buffer.
+o	Consumers retrieve data from the buffer.
+o	Solution: Implement a bounded buffer with synchronization using semaphores to manage buffer access.
+•	Reader-Writer Problem: Multiple readers can read shared data simultaneously, but writers need exclusive access.
+o	Solution: Implement read and write locks where writers wait if any reader is active, ensuring consistency in data modification.
+•	Dining Philosopher Problem: A classic synchronization problem involving philosophers seated at a table, each needing two forks to eat. Forks represent shared resources.
+o	Solution: Use resource allocation strategies (e.g., semaphores) to prevent deadlock and ensure fair access.
+________________________________________
+Q4. What are Different IPC Problems or Synchronization Problems?
+1.	Race Conditions: Uncontrolled access to shared resources.
+2.	Deadlocks: Processes waiting indefinitely due to circular resource dependencies.
+3.	Starvation: A process never gets access to a resource because others are continuously granted access.
+4.	Priority Inversion: A higher-priority process is waiting for a lower-priority process holding a resource.
+________________________________________
+Q5. What is Deadlock? What are Different Conditions for Deadlock?
+•	Deadlock: A situation where a set of processes are blocked because each process is holding a resource and waiting to acquire a resource held by another process.
+Deadlock Conditions (Coffman’s conditions):
+1.	Mutual Exclusion: Only one process can use a resource at a time.
+2.	Hold and Wait: Processes holding resources can request additional resources.
+3.	No Preemption: Resources cannot be forcibly removed from a process.
+4.	Circular Wait: A closed chain of processes exists, where each process holds a resource needed by the next process in the chain.
+________________________________________
+Q6. How to Deal with Deadlock?
+1.	Deadlock Prevention: Modify system conditions to violate one of the deadlock conditions (e.g., prevent circular wait by ordering resources).
+2.	Deadlock Avoidance: Dynamically allocate resources only if it’s safe to do so.
+3.	Deadlock Detection and Recovery: Allow deadlock to occur, detect it, and recover (e.g., by killing processes).
+4.	Banker's Algorithm: A deadlock avoidance algorithm that allocates resources safely based on current requests and available resources.
+________________________________________
+Q7. What is Deadlock Avoidance Algorithm? What is Banker’s Algorithm?
+•	Banker’s Algorithm: Used for deadlock avoidance in systems with multiple resources. It only grants resources if it can guarantee that the system will remain in a safe state, where at least one process can complete. Each process must declare its maximum resource requirements in advance.
+________________________________________
+UNIT 6: Memory Management
+Q1. Which Are Different Memory Management Techniques?
+1.	Single Contiguous Allocation: All memory is allocated to one process.
+2.	Partitioned Allocation:
+o	Fixed Partitions: Divides memory into fixed-size sections.
+o	Variable Partitions: Allocates based on process requirements.
+3.	Paging: Divides memory into equal-sized pages, mapping processes through page tables.
+4.	Segmentation: Divides processes into variable-sized segments based on functionality.
+5.	Virtual Memory: Combines RAM with disk space to create an illusion of a larger memory capacity.
+________________________________________
+Q2. What is Fixed & Variable-Sized Partition?
+•	Fixed-Sized Partition: Divides memory into fixed-size sections, allocating each to a process. It may lead to internal fragmentation (unused memory within partitions).
+•	Variable-Sized Partition: Allocates memory based on process needs, minimizing fragmentation but causing external fragmentation (scattered free memory).
+________________________________________
+Q3. What is Demand Paging? Demand Paging: A memory management technique where pages are loaded into memory only when required, reducing the load on memory by keeping only actively used pages. Pages are fetched from disk as needed, causing a page fault if a page is not found in memory.
+________________________________________
+Q4. What is Swapping? What is Contiguous & Non-Contiguous Memory Allocation?
+•	Swapping: Moving processes between main memory and disk to free memory for other processes.
+•	Contiguous Memory Allocation: Assigns memory blocks in a continuous sequence, improving access speed but causing fragmentation.
+•	Non-Contiguous Memory Allocation: Allocates memory in separate blocks (paging, segmentation), reducing fragmentation but increasing complexity.
+________________________________________
+Q5. What is Page Hit, Page Fault, Page Miss & Page Hit Ratio?
+•	Page Hit: Occurs when a requested page is in memory.
+•	Page Fault: Occurs when a requested page is not in memory, causing it to be loaded from disk.
+•	Page Miss: Another term for page fault.
+•	Page Hit Ratio: The ratio of page hits to the total memory requests. Page Hit Ratio=Number of Page HitsTotal Page Requests\text{Page Hit Ratio} = \frac{\text{Number of Page Hits}}{\text{Total Page Requests}}Page Hit Ratio=Total Page RequestsNumber of Page Hits
+________________________________________
+Q6. What are Different Page Replacement Policies?
+1.	FIFO (First-In-First-Out): Replaces the oldest page.
+2.	LRU (Least Recently Used): Replaces the page that hasn’t been used for the longest time.
+3.	Optimal: Replaces the page that won’t be needed for the longest period in the future.
+4.	Clock (Second Chance): Pages are given a second chance based on a reference bit.
+________________________________________
+Q7. What is Second Chance Algorithm? What is Belady's Anomaly?
+•	Second Chance Algorithm: A modification of FIFO where each page has a reference bit. If a page has a reference bit of 1, it gets a “second chance” instead of being replaced immediately.
+•	Belady's Anomaly: An unexpected phenomenon in FIFO where increasing the number of page frames results in more page faults. This does not occur with LRU or Optimal policies.
+________________________________________
+Q8. What is Segmentation & Thrashing?
+•	Segmentation: Memory management where programs are divided into segments based on logical divisions (e.g., code, data), mapped to physical memory through segment tables.
+•	Thrashing: A condition where excessive paging causes a significant decrease in performance, as the system spends more time swapping pages than executing processes.
+________________________________________
+Q10. Which Algorithm is Practically Difficult to Implement?
+•	Optimal Page Replacement Algorithm: Although it provides the best page fault performance, it requires knowledge of future page requests, making it impractical for real-world use.
+4o
+
+
+Assignment 1: Assembler
+1.	What is two-pass assembler?
+o	Two-pass assembler processes the source code in two stages (or passes).
+	Pass 1: Scans the code to gather information about labels and symbols, creating a symbol table.
+	Pass 2: Uses the symbol table to generate machine code or object code.
+2.	Significance of symbol table?
+o	A symbol table is crucial as it stores addresses and information about variables, labels, and constants used in the program.
+3.	Assembler directives EQU, ORIGIN?
+o	EQU: Assigns a constant value to a label.
+o	ORIGIN: Specifies the starting memory address for the subsequent instructions or data.
+4.	Assembler directives START, END, LTORG?
+o	START: Marks the beginning of the program.
+o	END: Marks the end of the source code.
+o	LTORG: Signals the assembler to process literals (constant values) immediately.
+5.	Use of POOLTAB and LITTAB?
+o	POOLTAB: Stores information about pools of literals.
+o	LITTAB: Literal Table that holds information on literals encountered during assembly.
+6.	Handling literals in Pass I?
+o	In Pass 1, literals are identified and placed into the LITTAB but are not assigned addresses until Pass 2.
+7.	Tasks in Pass I?
+o	Scans source code, assigns addresses to labels, constructs symbol table, and handles some directives.
+8.	Error handling in Pass I?
+o	Errors like undefined symbols or labels, illegal operations, and format violations are detected.
+9.	Implementation variant in Pass I?
+o	Single-pass assemblers merge both passes, generating machine code on the fly but with more complex error handling.
+10.	Intermediate data structures in Pass II?
+o	Uses symbol table, LITTAB, and POOLTAB to generate the final machine code.
+11.	Format of machine code in Pass II?
+o	Converts source code into object code, including instructions, addresses, and data.
+12.	Forward Reference Problem:
+o	A forward reference occurs when a label is used before being defined. It's resolved using placeholders or by deferring address resolution until Pass 2.
+13.	Error handling in Pass II?
+o	Errors like addressing issues or invalid instructions are corrected.
+14.	Difference between IS, DL, and AD?
+o	IS (Imperative Statement): Actual operations (e.g., ADD, MOVE).
+o	DL (Declarative Statement): Data definition statements.
+o	AD (Assembler Directive): Instructions for the assembler.
+15.	Tasks in Pass II?
+o	Generates object code, resolves addresses, and writes the final output.
+________________________________________
+Assignment 2: Macro Processor
+16.	Macro arguments types:
+o	Positional arguments: Passed in a fixed order.
+o	Keyword arguments: Identified by name.
+17.	Use of MDT-index field in MNT?
+o	It stores a reference to the Macro Definition Table (MDT) entry for a specific macro in the Macro Name Table (MNT).
+18.	ALA usage:
+o	Argument List Array (ALA) stores arguments passed to macros during macro expansion.
+19.	Macro expansion:
+o	A process where the assembler replaces macro calls with corresponding code from the macro definition.
+20.	Pass-2 of a two-pass macro processor:
+o	In Pass-2, the macro processor expands the macros into assembly code based on the gathered information.
+21.	Positional arguments:
+o	Arguments identified by their position in the macro call rather than by name.
+22.	MDT-index field in MNT?
+o	Helps locate the corresponding macro definition in the MDT during macro expansion.
+23.	Use of MNT table:
+o	Stores macro names and links to their definitions, used when expanding macros.
+________________________________________
+Assignment 3: DLL (Dynamic Link Library)
+24.	What is DLL?
+o	Dynamic Link Library (DLL): A shared library used in Windows that contains code and data which can be used by multiple programs simultaneously.
+25.	Significance of DLL:
+o	Helps save memory and modularize code, allowing programs to share code without embedding it.
+26.	Advantages/Disadvantages of DLL:
+o	Advantages: Reduced memory usage, code reuse, and easier updates.
+o	Disadvantages: DLL hell (version conflicts), dependency issues.
+27.	Static vs Dynamic Link Library:
+o	Static: Linked at compile-time, part of the executable.
+o	Dynamic: Linked at runtime, shared across programs.
+28.	Native Interface:
+o	Allows a program to interact directly with libraries written in another language like C or assembly.
+29.	Reasons to use JNI (Java Native Interface):
+o	To call native code (e.g., C/C++) from Java programs for performance gains or hardware-specific operations.
+30.	Shared Object:
+o	Similar to DLLs in Unix-based systems, they allow multiple programs to share code.
+
+
+ASSIGNMENT NO.4: Semaphore and Mutex
+1.	What is synchronization of threads?
+o	Thread synchronization ensures that two or more concurrent threads do not simultaneously execute a critical section of code that manipulates shared resources.
+2.	Explain the reader-writer problem.
+o	The reader-writer problem is a classical synchronization problem where multiple readers can access shared data concurrently, but writers need exclusive access. The challenge is to avoid conflicts when both reading and writing occur.
+3.	Explain wait and sequence functions.
+o	These are semaphore operations:
+	Wait (P): Decreases the semaphore count. If the count is less than or equal to zero, the process waits.
+	Signal (V): Increases the semaphore count and allows blocked processes to continue.
+4.	What is a semaphore?
+o	A semaphore is a synchronization tool used to manage resource access by multiple processes in a concurrent system.
+5.	What are different types of semaphores?
+o	Binary semaphore (0 or 1, like a mutex).
+o	Counting semaphore (can take any integer value).
+________________________________________
+ASSIGNMENT NO.5: CPU Scheduling
+6.	What are the types of CPU schedulers?
+o	Long-term scheduler: Decides which processes are admitted to the system for execution.
+o	Short-term scheduler: Selects which process should be executed next.
+o	Medium-term scheduler: Handles swapping between processes to manage memory.
+7.	Difference between long and short-term scheduling?
+o	Long-term: Focuses on deciding which processes to admit to the system.
+o	Short-term: Decides the next process for CPU execution.
+8.	Logic of the program?
+o	Likely referring to the algorithm or strategy behind CPU scheduling logic, e.g., FIFO, Round Robin, etc.
+9.	What is preemptive and non-preemptive scheduling?
+o	Preemptive: The scheduler can interrupt a process to switch to another.
+o	Non-preemptive: Once a process is started, it runs to completion.
+10.	What are types of scheduling algorithms?
+o	First Come First Serve (FCFS)
+o	Shortest Job First (SJF)
+o	Round Robin (RR)
+o	Priority Scheduling
+o	Multilevel Queue Scheduling
+11.	Why does priority scheduling cause low-priority processes to starve?
+o	If higher-priority processes keep arriving, low-priority ones might never get executed, leading to starvation.
+12.	Goals of scheduling?
+o	Maximizing CPU utilization, throughput, fairness, and minimizing waiting time, response time, and turnaround time.
+13.	Difference between preemptive and non-preemptive scheduling?
+o	Preemptive allows the system to take the CPU from a running process, while non-preemptive scheduling does not allow interruption until a process finishes its CPU burst.
+14.	Which scheduling algorithm is best? Why?
+o	No single answer; it depends on the system goals (e.g., fairness, low latency). Round Robin is often favored in time-sharing systems due to fairness.
+________________________________________
+ASSIGNMENT NO.6: First Fit, Next Fit
+15.	Which algorithm is best and why?
+o	First Fit is faster because it allocates the first available free block. However, Best Fit may reduce fragmentation in some cases.
+16.	Need for allocating blocks to jobs?
+o	To efficiently manage memory, the system must allocate and deallocate memory to processes.
+17.	Time taken by each algorithm for execution?
+o	First Fit: Faster but can leave small unusable gaps (fragmentation).
+o	Next Fit: Similar to First Fit, but starts searching from the last allocated block.
+________________________________________
+ASSIGNMENT NO.7: Page Replacement
+18.	What is virtual memory?
+o	Virtual memory allows the execution of processes that may not be completely in memory, using disk storage to simulate more RAM.
+19.	Explain the working of LRU page replacement algorithm.
+o	Least Recently Used (LRU) replaces the page that hasn’t been used for the longest period of time.
+20.	Explain the working of OPTIMAL page replacement algorithm.
+o	OPTIMAL replaces the page that will not be used for the longest time in the future. This algorithm requires knowledge of future references.
+21.	Which page replacement algorithm is best?
+o	OPTIMAL is ideal but impractical due to the requirement of future knowledge. LRU is a commonly used alternative.
+22.	What is Belady’s Anomaly?
+o	In some page replacement algorithms like FIFO, increasing the number of page frames can result in more page faults, contrary to expectations.
+23.	Scenario where page replacement algorithm is used?
+o	When a program references a page not in memory, the page replacement algorithm determines which page to swap out.
+24.	What is a page fault?
+o	Occurs when a process tries to access a page not currently in memory, triggering a page load from disk.
+25.	What is a paging scheme?
+o	Paging divides memory into fixed-sized pages and manages these pages efficiently between disk and RAM.
+26.	Counting-based page replacement algorithms?
+o	Algorithms like LFU (Least Frequently Used), which replace pages based on the frequency of use over time.
+________________________________________
+ASSIGNMENT NO.8: IoT, IR Sensor
+27.	What is the difference between Arduino and Raspberry Pi?
+o	Arduino is a microcontroller-based board used for simple tasks like controlling sensors, while Raspberry Pi is a full computer capable of running an operating system, handling complex tasks.
+28.	What is the use of an IR sensor?
+o	An IR sensor detects infrared radiation to sense objects, measure distance, or detect motion.
+________________________________________
+ASSIGNMENT NO.9: IoT, Temperature Sensor
+29.	Explain LM35 sensor in detail.
+o	The LM35 is a precision temperature sensor with an analog output, providing a voltage proportional to temperature.
+30.	Explain DHT11 sensor in detail.
+o	The DHT11 is a low-cost digital sensor used to measure both temperature and humidity. It uses a capacitive humidity sensor and a thermistor.
+31.	Application of temperature sensors?
+o	Temperature sensors are used in HVAC systems, environmental monitoring, industrial equipment, and IoT applications like smart homes.
+
+1. First Come First Serve (FCFS) Scheduling
+Algorithm:
+1.	Sort processes based on their arrival time.
+2.	Allocate CPU to the process that arrives first and continue executing it until it finishes.
+3.	When the first process completes, pick the next process in the queue.
+4.	Repeat until all processes are executed.
+Flowchart:
+1.	Start.
+2.	Sort processes by arrival time.
+3.	Assign CPU to the process with the earliest arrival time.
+4.	Execute the process until completion.
+5.	Check if all processes are completed. If yes, go to Step 7; otherwise, go to Step 3.
+6.	End.
+________________________________________
+2. Shortest Job First (SJF) Scheduling
+Non-Preemptive Algorithm:
+1.	Sort processes based on burst time.
+2.	Select the process with the shortest burst time.
+3.	Allocate CPU to the selected process and run until it finishes.
+4.	Repeat until all processes are executed.
+Preemptive Algorithm (Shortest Remaining Time First - SRTF):
+1.	Sort processes based on burst time.
+2.	Select the process with the shortest remaining burst time.
+3.	If a new process arrives with a shorter burst time than the current process, preempt the current process.
+4.	Continue executing the shortest remaining process.
+5.	Repeat until all processes are executed.
+Flowchart (Non-preemptive):
+1.	Start.
+2.	Sort processes by burst time.
+3.	Assign CPU to the process with the shortest burst time.
+4.	Execute the process until completion.
+5.	Check if all processes are completed. If yes, go to Step 7; otherwise, go to Step 2.
+6.	End.
+Flowchart (Preemptive):
+1.	Start.
+2.	Sort processes by burst time.
+3.	Assign CPU to the process with the shortest remaining time.
+4.	Check for any new process arrival:
+o	If a new process has a shorter burst time, preempt the current one.
+5.	Execute the process until completion.
+6.	Repeat Steps 4 and 5 until all processes are executed.
+7.	End.
+________________________________________
+3. Round Robin (RR) Scheduling
+Algorithm:
+1.	Set a time quantum.
+2.	Execute the first process for the time quantum or until completion (whichever comes first).
+3.	Move to the next process in the queue and repeat Step 2.
+4.	If a process doesn't finish within the time quantum, add it back to the end of the queue.
+5.	Repeat until all processes are executed.
+Flowchart:
+1.	Start.
+2.	Assign time quantum.
+3.	Assign CPU to the first process for the duration of the time quantum.
+4.	If the process completes, remove it from the queue.
+5.	If the process does not complete, move it to the end of the queue.
+6.	Repeat Steps 3 to 5 until all processes are completed.
+7.	End.
+________________________________________
+4. Priority Scheduling
+Non-Preemptive Algorithm:
+1.	Sort processes based on their priority.
+2.	Assign CPU to the process with the highest priority (lowest priority number).
+3.	Execute the selected process until completion.
+4.	Repeat until all processes are executed.
+Preemptive Algorithm:
+1.	Sort processes based on priority.
+2.	If a new process arrives with a higher priority than the current process, preempt the current one.
+3.	Assign CPU to the highest priority process.
+4.	Continue the execution of the highest priority process until completion.
+5.	Repeat until all processes are executed.
+Flowchart (Non-Preemptive):
+1.	Start.
+2.	Sort processes by priority.
+3.	Assign CPU to the process with the highest priority.
+4.	Execute the process until completion.
+5.	Check if all processes are completed. If yes, go to Step 7; otherwise, go to Step 2.
+6.	End.
+Flowchart (Preemptive):
+1.	Start.
+2.	Sort processes by priority.
+3.	Assign CPU to the process with the highest priority.
+4.	Check for any new process arrival:
+o	If a new process has a higher priority, preempt the current one.
+5.	Execute the process until completion.
+6.	Repeat Steps 4 and 5 until all processes are completed.
+7.	End.
+
